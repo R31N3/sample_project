@@ -1,43 +1,3 @@
-def timer(executable_function):  # декоратор, честно скопированный с habrahabr.ru и чуток доделанный
-    import time
-
-    def decorate(*args, **kwargs):
-        time_point = time.time()
-        result = executable_function(*args, **kwargs)
-        print('Время выполнения функции "{}": {:f} секунд'
-              .format(executable_function.__name__, time.time() - time_point))
-        return result
-    return decorate
-
-
-def smart_timeout(timeout: int = 0.34):
-    import time
-
-    def wrap(executable_function):
-        def decorate(*args, **kwargs):
-            start_time = time.time()
-            result = executable_function(*args, **kwargs)
-            if time.time() - start_time < timeout:
-                time.sleep(timeout - (time.time() - start_time))
-            return result
-        return decorate
-    return wrap
-
-
-def error_protection(executable_function):
-    import time
-
-    def decorate(*args, **kwargs):
-        try:
-            result = executable_function(*args, **kwargs)
-        except Exception as exc:
-            print("==========\nError:\n{}\nDate: {}\n=========="
-                  .format(exc, time.strftime("%H.%M.%S - %d.%m.%Y", time.localtime())))
-        else:
-            return result
-    return decorate
-
-
 def get_suggests(user_storage):
     if "suggests" in user_storage.keys():
         suggests = []
@@ -66,9 +26,14 @@ def IDontUnderstand(response, user_storage, answer):
 
 def read_answers_data(name):
     import json
-    with open(name+".json", encoding="utf-8") as file:
+    with open(name + ".json", encoding="utf-8") as file:
         data = json.loads(file.read())
         return data
+
+
+def get_dict_from_file_str(path: str) -> dict:
+    with open(path, 'r') as dict_file:
+        return eval(str(dict_file.read().replace('\n', '')))
 
 
 aliceAnswers = read_answers_data("data/answers_dict_example")
