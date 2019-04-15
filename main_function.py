@@ -1,14 +1,15 @@
 # coding: utf-8
 from __future__ import unicode_literals
-import json
 from little_fuctions import *
 
 aliceAnswers = read_answers_data("data/answers_dict_example")
 
 
-def choice_wrd(chr):
+def choice_wrd(chr, used_words=[]):
     from random import choice
-    user_word = choice(get_dict_from_file_str("data/user_words.txt")[chr])
+    user_word = choice(get_dict_from_file_str("data/words.txt")[chr])
+    while user_word in used_words:
+        user_word = choice(get_dict_from_file_str("data/words.txt")[chr])
     return user_word
 
 
@@ -47,19 +48,24 @@ def handle_dialog(request, response, user_storage, database):
 
     data = database.get_entry(request.user_id)[0]
     if "давай" in input_message or ("хочу" in input_message and "не" in input_message) and not data[1]:
-        wrd = choice_wrd(data[1] if data[1] else choice("айцукенгшщзхфывапролджэячсмитбю"))
-        database.update(request.user_id, wrd[-1] if wrd[-1] not in "ьъ" else wrd[-2], "")
+        chosen_word = choice_wrd(data[1] if data[1] else choice("айцукенгшщзхфывапролджэячсмитбю"))
+        database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2], "")
         output_message = "Только запомни, учитываться будет только первое слово. Что ж, начнём! Внимание, слово " \
-                         "- {}.".format(wrd)
+                         "- {}.".format(chosen_word)
         user_storage = {'suggests': []}
         return message_return(response, user_storage, output_message)
 
     elif data and data[1]:
         if user_word[0][0].lower() == data[1]:
             if check_wrd(user_word[0]):
-                wrd = choice_wrd(user_word[0][-1] if user_word[0][-1] not in "ьъ" else user_word[0][-2])
-                output_message = "Правильно! Следующее слово - {}".format(wrd)
-                database.update(request.user_id, wrd[-1] if wrd[-1] not in "ьъ" else wrd[-2], "")
+                used_words = data[2].split("#$")
+                if user_word[0] not in used_words:
+                    used_words.append(user_word[0])
+                    chosen_word = choice_wrd(user_word[0][-1] if user_word[0][-1] not in "ьъ" else user_word[0][-2], used_words)
+                    output_message = "Правильно! Следующее слово - {}".format(chosen_word)
+                    database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2], "#$".join(used_words))
+                else:
+                    output_message = "Неправильно, это слово уже использовалось!"
             else:
                 output_message = "Неправильно, ты это слово выдумал, что ли?"
         else:
