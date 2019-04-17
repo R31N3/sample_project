@@ -10,20 +10,24 @@ class DatabaseManager:
         self.connection = sqlite3.connect("data/alisa_users.db", isolation_level=None)
         cursor = self.connection.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS users '
-                       '(user_id TEXT PRIMARY KEY NOT NULL, last_char TEXT, already_used_words TEXT)')
+                       '(user_id TEXT PRIMARY KEY NOT NULL, last_char TEXT, already_used_words TEXT,'
+                       'current_score INT, max_score INT)')
         cursor.close()
 
     def __del__(self):
         self.connection.close()
 
-    def add_user(self, user_id: str, last_char: str = '', already_used_words: str = '') -> bool:
+    def add_user(self, user_id: str, last_char: str = '', already_used_words: str = '',
+                 current_score: int = 0, max_score: int = 0) -> bool:
         cursor = self.connection.cursor()
         try:
             if not self.get_entry(user_id):
                 print('Пользователь {} добавлен.'.format(user_id))
                 cursor.execute("""INSERT INTO users 
-                                VALUES(:user_id, :last_char, :already_used_words)""", {
-                    'user_id': user_id, 'last_char': last_char, 'already_used_words': already_used_words
+                                VALUES(:user_id, :last_char, :already_used_words
+                                :current_score, :max_score)""", {
+                    'user_id': user_id, 'last_char': last_char, 'already_used_words': already_used_words,
+                    'current_score': current_score, 'max_score': max_score
                 })
             else:
                 print('Пользователь {} уже существует!'.format(user_id))
@@ -37,7 +41,8 @@ class DatabaseManager:
             cursor.close()
             return True
 
-    def update(self, user_id: str, new_last_char: str, add_to_used_words: str) -> bool:
+    def update(self, user_id: str, new_last_char: str, used_words: str,
+                 current_score: int = 0, max_score: int = 0) -> bool:
         cursor = self.connection.cursor()
         try:
             exist_entry = self.get_entry(user_id)
@@ -49,11 +54,14 @@ class DatabaseManager:
                 comma = ',' if len(exist_entry[0][2]) > 0 else ''
                 cursor.execute("""UPDATE users
                                 SET last_char = :last_char, 
-                                already_used_words = :already_used_words
+                                already_used_words = :already_used_words,
+                                current_score = :current_score,
+                                max_score = :max_score
                                 WHERE user_id == :user_id""",
                                {
                                    'user_id': user_id, 'last_char': new_last_char,
-                                   'already_used_words': add_to_used_words
+                                   'already_used_words': used_words,
+                                   'current_score': current_score, 'max_score': max_score
 
                                })
         except sqlite3.DatabaseError as error:

@@ -5,17 +5,18 @@ from little_fuctions import *
 aliceAnswers = read_answers_data("data/answers_dict_example")
 
 
-def choice_wrd(chr, used_words=[]):
+def choice_wrd(last_char, used_words):
+    if type(used_words) is not list:
+        used_words = []
     from random import choice
-    user_word = choice(read_answers_data("data/words")[chr])
+    user_word = choice(read_answers_data("data/words")[last_char])
     while user_word in used_words:
-        user_word = choice(read_answers_data("data/words")[chr])
+        user_word = choice(read_answers_data("data/words")[last_char])
     return user_word
 
 
 # Ну вот эта функция всем функциям функция, ага. Замена постоянному формированию ответа, ага, экономит 4 строчки!!
-def message_return(response, user_storage, message):
-    # ща будет магия
+def message_return(response, user_storage, message):  # ща будет магия
     response.set_text(message)
     response.set_tts(message)
     buttons, user_storage = get_suggests(user_storage)
