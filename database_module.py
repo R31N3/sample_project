@@ -53,7 +53,7 @@ class DatabaseManager:
                                 WHERE user_id == :user_id""",
                                {
                                    'user_id': user_id, 'last_char': new_last_char,
-                                   'already_used_words': exist_entry[0][2] + comma + add_to_used_words
+                                   'already_used_words': add_to_used_words
 
                                })
         except sqlite3.DatabaseError as error:

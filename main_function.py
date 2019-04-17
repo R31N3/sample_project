@@ -7,9 +7,9 @@ aliceAnswers = read_answers_data("data/answers_dict_example")
 
 def choice_wrd(chr, used_words=[]):
     from random import choice
-    user_word = choice(get_dict_from_file_str("data/words.txt")[chr])
+    user_word = choice(read_answers_data("data/words")[chr])
     while user_word in used_words:
-        user_word = choice(get_dict_from_file_str("data/words.txt")[chr])
+        user_word = choice(read_answers_data("data/words")[chr])
     return user_word
 
 
@@ -35,9 +35,10 @@ def handle_dialog(request, response, user_storage, database):
             output_message = "Привет-привет. Не хочешь ли ты сыграть в слова?"
             database.add_user(request.user_id)
         else:
-            output_message = "И снова здравствуй! Не хочешь ли ты сыграть в слова?"
+            output_message = "И снова здравствуй! Продолжим игру??"
         user_storage = {'suggests': [
-            "Давай"
+            "Давай",
+            "Начать сначала"
         ]}
         return message_return(response, user_storage, output_message)
 
@@ -47,9 +48,13 @@ def handle_dialog(request, response, user_storage, database):
         return message_return(response, user_storage, output_message)
 
     data = database.get_entry(request.user_id)[0]
-    if "давай" in input_message or ("хочу" in input_message and "не" in input_message) and not data[1]:
+    if "давай" in input_message or "сначала" in input_message or ("хочу" in input_message and "не" in input_message) and not data[1]:
         chosen_word = choice_wrd(data[1] if data[1] else choice("айцукенгшщзхфывапролджэячсмитбю"))
-        database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2], "")
+        if "сначала" in input_message:
+            print(data[2])
+            database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2], "")
+        else:
+            database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2], data[2])
         output_message = "Только запомни, учитываться будет только первое слово. Что ж, начнём! Внимание, слово " \
                          "- {}.".format(chosen_word)
         user_storage = {'suggests': []}

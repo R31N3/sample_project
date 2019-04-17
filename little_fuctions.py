@@ -31,11 +31,6 @@ def read_answers_data(name):
         return data
 
 
-def get_dict_from_file_str(path: str) -> dict:
-    with open(path, 'r') as dict_file:
-        return eval(str(dict_file.read().replace('\n', '')))
-
-
 aliceAnswers = read_answers_data("data/answers_dict_example")
 
 
