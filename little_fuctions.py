@@ -37,12 +37,22 @@ aliceAnswers = read_answers_data("data/answers_dict_example")
 def check_wrd(wrd):
     import requests
     API_CODE = 'dict.1.1.20190331T101514Z.9cbf4535b1122019.dbd3fb8c0fded55cd45d1f44459bbfda21d8e82a'
-    BASIC_REQUEST = \
-        'https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key={API_CODE}&lang=TRANS&text=TEXTWORD' \
-        .format(API_CODE=API_CODE)
+    BASIC_REQUEST = '''https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key={API_CODE}&lang=TRANS&text=TEXTWORD'''.format(
+        API_CODE=API_CODE)
+    ERRORS = {200: 'Запрос выполнен',
+              401: 'Ключ API невалиден',
+              402: 'Ключ API заблокирован',
+              403: 'Превышено суточное ограничение на кол-во запросов',
+              413: 'Превышен максимальный размер текста',
+              501: 'Заданное направление перевода не поддерживается'}
+
     url_for_request = BASIC_REQUEST.replace('TRANS', "ru-ru").replace('TEXTWORD', wrd)
     response = requests.get(url_for_request).json()
-    if len(response['def']) > 0:
-        return True
+    if 'code' in response.keys():
+        return ERRORS[response['code']]
     else:
-        return False
+        dct = read_answers_data("data/words")
+        if len(response['def']) > 0 or (wrd[0] in dct.keys() and wrd in dct[wrd[0][0]]):
+            return True
+        else:
+            return False
