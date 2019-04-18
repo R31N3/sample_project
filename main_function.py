@@ -53,18 +53,24 @@ def handle_dialog(request, response, user_storage, database):
             "Давай"
         ]}
         return message_return(response, user_storage, output_message)
-
-    if "таблица лидеров" in input_message or "лидеры" in input_message:
-        # leaders = database.get_leaders()
+    if "таблица лидеров" in input_message or "лидеры" in input_message or "рейтинг" in input_message:
+        leaders = database.get_leaderboard()
         # Получение таблицы лидеров, нужно получать лист, как снизу, да, именно так.
-        leaders = [(1, "Дима бох", 1487), (99999999, "Гоша лох", 0)]
-        output_message = "Имеющиеся на данный момент лидеры:\n{}\n".format(
-            ",\n".join(["{} место - {}, счет - {}".format(i[0], i[1], i[2]) for i in
-                        leaders])) + "Продолжим игру или начнем сначала?"
+        # leaders = [(1, "Дима бох", 1487), (99999999, "Гоша лох", 0)]
+        output_message = "Имеющиеся на данный момент лидеры:\n{}\n"\
+                         .format(",\n".join(["{}. {}, счет - {}".format(i[0], i[1], i[2]) for i in leaders]))
+        current_user_stats = database.get_entry(request.user_id)
+        current_user_stats = (current_user_stats[1], current_user_stats[4], current_user_stats[3])
+        if not any([True if current_user_stats[:2] == lead[1:] else False for lead in leaders]):
+            output_message += '==========\n{}, сейчас: {}, максимально: {}' \
+                .format(current_user_stats[1], current_user_stats[3], current_user_stats[4])
+        output_message += "\nПродолжим игру или начнем сначала?"
+
         user_storage = {'suggests': [
             "Продолжить",
             "Начать сначала"
         ]}
+
         return message_return(response, user_storage, output_message)
 
     entry = database.get_entry(request.user_id)[0]
