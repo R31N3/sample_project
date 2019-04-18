@@ -85,7 +85,7 @@ def handle_dialog(request, response, user_storage, database):
                             current_score=0, max_score=entry[3] if entry[3] > entry[4] else entry[4])
         else:
             database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2],
-                            current_score=entry[3], max_score=entry[4])
+                            current_score=entry[3], max_score=entry[3] if entry[3] > entry[4] else entry[4])
         output_message = "Только запомни, учитываться будет только первое слово. Что ж, начнём! Внимание, слово " \
                          "- {}.".format(chosen_word)
         user_storage = {'suggests': []}
@@ -102,7 +102,7 @@ def handle_dialog(request, response, user_storage, database):
                     output_message = "Правильно! Следующее слово - {}".format(chosen_word)
                     database.update(request.user_id,
                                     chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2],
-                                    current_score=entry[3] + 1, max_score=entry[4])
+                                    current_score=entry[3] + 1, max_score=entry[3] if entry[3] > entry[4] else entry[4])
                     database.add_word(request.user_id, user_word[0])
                 else:
                     output_message = "Неправильно, это слово уже использовалось!"
