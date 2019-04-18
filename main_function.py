@@ -67,16 +67,16 @@ def handle_dialog(request, response, user_storage, database):
         ]}
         return message_return(response, user_storage, output_message)
 
-    data = database.get_entry(request.user_id)[0]
+    entry = database.get_entry(request.user_id)[0]
+    data = (entry[1], entry[2], database.get_words(request.user_id))
     if "продолжить" in input_message or "давай" in input_message or "сначала" in input_message or (
             "хочу" in input_message and "не" in input_message) and not data[1]:
         chosen_word = choice_wrd(data[1] if data[1] else choice("айцукенгшщзхфывапролджэячсмитбю"))
         if "сначала" in input_message:
             print(data[2])
-            database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2], "")
+            database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2])
         else:
-            database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2],
-                            data[2])
+            database.update(request.user_id, chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2])
         output_message = "Только запомни, учитываться будет только первое слово. Что ж, начнём! Внимание, слово " \
                          "- {}.".format(chosen_word)
         user_storage = {'suggests': []}
@@ -85,7 +85,7 @@ def handle_dialog(request, response, user_storage, database):
     elif data and data[1]:
         if user_word[0][0].lower() == data[1]:
             if check_wrd(user_word[0]):
-                used_words = data[2].split("#$")
+                used_words = data[2]
                 if user_word[0] not in used_words:
                     used_words.append(user_word[0])
                     chosen_word = choice_wrd(user_word[0][-1] if user_word[0][-1] not in "ьъ" else user_word[0][-2],
@@ -99,8 +99,8 @@ def handle_dialog(request, response, user_storage, database):
             else:
                 output_message = "Неправильно, ты это слово выдумал, что ли?"
         else:
-            output_message = "Неправильно! Слово начинается не с той буквы, напоминаю, должна быть буква {}".format(
-                data[1])
+            output_message = "Неправильно! Слово начинается не с той буквы, напоминаю, должна быть буква {}"\
+                .format(data[1])
         return message_return(response, user_storage, output_message)
 
     buttons, user_storage = get_suggests(user_storage)

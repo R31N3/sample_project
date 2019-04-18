@@ -121,7 +121,7 @@ class DatabaseManager:
         else:
             result = cursor.fetchall()
         cursor.close()
-        return result
+        return [elem[1] for elem in result]
 
     def delete_user(self, user_id: str) -> bool:
         cursor = self.connection.cursor()
