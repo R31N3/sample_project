@@ -51,7 +51,8 @@ def check_wrd(wrd):
     if 'code' in response.keys():
         return ERRORS[response['code']]
     else:
-        if len(response['def']) > 0:
+        dct = read_answers_data("data/words")
+        if len(response['def']) > 0 or (wrd[0] in dct.keys() and wrd in dct[wrd[0][0]]):
             return True
         else:
             return False
