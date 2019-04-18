@@ -123,8 +123,8 @@ class DatabaseManager:
             cursor.close()
             return True
 
-    def make_leaderboard(self, user_id: str, size_of_table: int = 10) -> list:
-        values_list = self.get_entry(user_id)  # [('1', '', '', 0, 0), ('2', 'н', 'таракан', 0, 0)]
+    def make_leaderboard(self, size_of_table: int = 10) -> list:
+        values_list = self.get_all_entries()  # [('1', '', '', 0, 0), ('2', 'н', 'таракан', 0, 0)]
         result = sorted(values_list, key=lambda inner_list: inner_list[4], reverse=True)
         size_of_board = len(result) if len(result) < size_of_table else size_of_table
         return [(i, result[1], result[4]) for i in range(size_of_board)]
