@@ -10,7 +10,8 @@ class DatabaseManager:
         self.connection = sqlite3.connect("data/alisa_users.db", isolation_level=None)
         cursor = self.connection.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS users '
-                       '(user_id TEXT PRIMARY KEY NOT NULL, last_char TEXT, already_used_words TEXT,'
+                       '(user_id TEXT PRIMARY KEY NOT NULL, '
+                       'last_char TEXT, already_used_words TEXT,'
                        'current_score INT, max_score INT)')
         cursor.close()
 
