@@ -22,13 +22,13 @@ class DatabaseManager:
         cursor = self.connection.cursor()
         try:
             if not self.get_entry(user_id):
-                print('Пользователь {} добавлен.'.format(user_id))
                 cursor.execute("""INSERT INTO users 
-                                VALUES(:user_id, :last_char, :already_used_words
+                                VALUES(:user_id, :last_char, :already_used_words,
                                 :current_score, :max_score)""", {
                     'user_id': user_id, 'last_char': last_char, 'already_used_words': already_used_words,
                     'current_score': current_score, 'max_score': max_score
                 })
+                print('Пользователь {} добавлен.'.format(user_id))
             else:
                 print('Пользователь {} уже существует!'.format(user_id))
                 cursor.close()
@@ -122,3 +122,9 @@ class DatabaseManager:
         else:
             cursor.close()
             return True
+
+    def make_leaderboard(self, user_id: str, size_of_table: int = 10) -> list:
+        values_list = self.get_entry(user_id)  # [('1', '', '', 0, 0), ('2', 'н', 'таракан', 0, 0)]
+        result = sorted(values_list, key=lambda inner_list: inner_list[4], reverse=True)
+        size_of_board = len(result) if len(result) < size_of_table else size_of_table
+        return [(i, result[1], result[4]) for i in range(size_of_board)]
