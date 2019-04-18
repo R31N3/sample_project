@@ -92,8 +92,8 @@ def handle_dialog(request, response, user_storage, database):
                                              used_words)
                     output_message = "Правильно! Следующее слово - {}".format(chosen_word)
                     database.update(request.user_id,
-                                    chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2],
-                                    "#$".join(used_words))
+                                    chosen_word[-1] if chosen_word[-1] not in "ьъ" else chosen_word[-2])
+                    database.add_word(request.user_id, user_word[0])
                 else:
                     output_message = "Неправильно, это слово уже использовалось!"
             else:
