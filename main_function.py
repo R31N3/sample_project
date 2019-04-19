@@ -30,7 +30,7 @@ def handle_dialog(request, response, user_storage, database):
         return message_return(response, user_storage, output_message)
 
     if input_message in ['не хочется', 'в следующий раз', 'выход', "не хочу", 'выйти', 'стоп']:
-        output_message = choice(aliceAnswers["quitTextVariations"])
+        output_message = "Окей, напиши мне что-нибудь, если захочешь снова поиграть)"
         response.end_session = True
         return message_return(response, user_storage, output_message)
 

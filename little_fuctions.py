@@ -46,9 +46,6 @@ def read_answers_data(name: str) -> dict:
     return ujson.load(open(name + ".json", encoding="utf-8"))
 
 
-aliceAnswers = read_answers_data("data/answers_dict_example")
-
-
 def choice_wrd(last_char, used_words):
     if type(used_words) is not list:
         used_words = []
