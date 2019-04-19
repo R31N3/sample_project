@@ -1,4 +1,4 @@
-import json
+import ujson
 
 
 class AliceRequest(object):
@@ -40,10 +40,10 @@ class AliceResponse(object):
         }
 
     def dumps(self):
-        return json.dumps(
+        return ujson.dumps(
             self._response_dict,
             ensure_ascii=False,
-            indent=2
+            # indent=2
         )
 
     def set_text(self, text):

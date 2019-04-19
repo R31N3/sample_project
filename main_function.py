@@ -29,7 +29,7 @@ def handle_dialog(request, response, user_storage, database):
         ]}
         return message_return(response, user_storage, output_message)
 
-    if input_message in ['не хочется', 'в следующий раз', 'выход', "не хочу", 'выйти']:
+    if input_message in ['не хочется', 'в следующий раз', 'выход', "не хочу", 'выйти', 'стоп']:
         output_message = choice(aliceAnswers["quitTextVariations"])
         response.end_session = True
         return message_return(response, user_storage, output_message)
@@ -93,7 +93,10 @@ def handle_dialog(request, response, user_storage, database):
                 else:
                     output_message = "Неправильно, это слово уже использовалось!"
             else:
-                output_message = "Неправильно, ты это слово выдумал, что ли? Если нет, то скорее всего его просто нет в моем словаре, лучше подбери другой вариант."
+                output_message = "Неправильно, " \
+                                 "ты это слово выдумал, что ли? " \
+                                 "Если нет, то скорее всего его просто нет в моем словаре, " \
+                                 "лучше подбери другой вариант."
         else:
             output_message = "Неправильно! Слово начинается не с той буквы, напоминаю, должна быть буква {}." \
                 .format(entry[2])

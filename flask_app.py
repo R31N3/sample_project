@@ -17,10 +17,11 @@ from main_function import *
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 
-app = Flask(__name__)
-
 # Импортируем базу данных
 import database_module
+
+# Инициализируем "приложение" для самого веб-сервиса
+app = Flask(__name__)
 
 # Хранилище данных о сессиях.
 session_storage = {}
@@ -29,7 +30,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 @app.route("/life_simulation/ping")
-def mainn():
+def ping():
     return "pong"
 
 

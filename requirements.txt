@@ -1,2 +1,4 @@
+ujson
+requests
 Flask==0.12.2
 pymorphy2
