@@ -100,4 +100,9 @@ def handle_dialog(request, response, user_storage, database):
         return message_return(response, user_storage, output_message)
 
     buttons, user_storage = get_suggests(user_storage)
-    return message_error(response, user_storage, aliceAnswers["cantTranslate"])
+    return message_error(response, user_storage, [
+        "Я жду ответа!",
+        "Не очень понял ответ, но я надеюсь, что это была смешная шутка",
+        "Я не настолько умный, как человеки, поэтому ответьте крайне линейно",
+        "Вау... ничего не понял"
+    ])
