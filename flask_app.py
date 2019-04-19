@@ -35,7 +35,7 @@ def ping():
 
 
 # Задаем параметры приложения Flask.
-@app.route("/alice_hackaton/", methods=['POST'])
+@app.route("/", methods=['POST'])
 def main():
     # Функция получает тело запроса и возвращает ответ.
     alice_request = AliceRequest(request.json)
@@ -55,6 +55,12 @@ def main():
     print()
 
     return alice_response.dumps()
+
+
+# Просто будем проверять, работает ли наш сервис
+@app.route('/')
+def ping_get():
+    return "Hello, Alice!)"
 
 
 if __name__ == '__main__':
