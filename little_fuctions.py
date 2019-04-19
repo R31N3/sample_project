@@ -14,7 +14,7 @@ def get_suggests(user_storage):
     return suggests, user_storage
 
 
-def IDontUnderstand(response, user_storage, answer):
+def message_error(response, user_storage, answer):
     import random
     message = random.choice(answer)
     response.set_text(message)
@@ -34,11 +34,30 @@ def read_answers_data(name):
 aliceAnswers = read_answers_data("data/answers_dict_example")
 
 
+def choice_wrd(last_char, used_words):
+    if type(used_words) is not list:
+        used_words = []
+    from random import choice
+    user_word = choice(read_answers_data("data/words")[last_char])
+    while user_word in used_words:
+        user_word = choice(read_answers_data("data/words")[last_char])
+    return user_word
+
+
+# Ну вот эта функция всем функциям функция, ага. Замена постоянному формированию ответа, ага, экономит 4 строчки!!
+def message_return(response, user_storage, message):  # ща будет магия
+    response.set_text(message)
+    response.set_tts(message)
+    buttons, user_storage = get_suggests(user_storage)
+    response.set_buttons(buttons)
+    return response, user_storage
+
+
 def check_wrd(wrd):
     import requests
     API_CODE = 'dict.1.1.20190331T101514Z.9cbf4535b1122019.dbd3fb8c0fded55cd45d1f44459bbfda21d8e82a'
-    BASIC_REQUEST = '''https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key={API_CODE}&lang=TRANS&text=TEXTWORD'''.format(
-        API_CODE=API_CODE)
+    BASIC_REQUEST = '''https://dictionary.yandex.net/api/v1/dicservice.json/lookup?key={API_CODE}
+    &lang=TRANS&text=TEXTWORD'''.format(API_CODE=API_CODE)
     ERRORS = {200: 'Запрос выполнен',
               401: 'Ключ API невалиден',
               402: 'Ключ API заблокирован',
