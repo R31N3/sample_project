@@ -49,10 +49,9 @@ def read_answers_data(name: str) -> dict:
 def choice_wrd(last_char, used_words):
     if type(used_words) is not list:
         used_words = []
-    from random import choice
-    user_word = choice(read_answers_data("data/words")[last_char])
+    user_word = random.choice(read_answers_data("data/words")[last_char])
     while user_word in used_words:
-        user_word = choice(read_answers_data("data/words")[last_char])
+        user_word = random.choice(read_answers_data("data/words")[last_char])
     return user_word
 
 
@@ -72,7 +71,4 @@ def check_wrd(wrd):
         return ERRORS[response['code']]
     else:
         dct = read_answers_data("data/words")
-        if len(response['def']) > 0 or (wrd[0] in dct.keys() and wrd in dct[wrd[0][0]]):
-            return True
-        else:
-            return False
+        return len(response['def']) > 0 or (wrd[0] in dct.keys() and wrd in dct[wrd[0][0]])
